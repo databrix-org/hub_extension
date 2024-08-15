@@ -4778,7 +4778,10 @@ __metadata:
     "@jupyterlab/application": ^4.2.4
     "@jupyterlab/apputils": ^4.3.4
     "@jupyterlab/builder": ^4.0.0
+    "@jupyterlab/coreutils": ^6.2.4
+    "@jupyterlab/services": ^7.2.4
     "@jupyterlab/testutils": ^4.0.0
+    "@jupyterlab/translation": ^4.2.4
     "@types/jest": ^29.2.0
     "@types/json-schema": ^7.0.11
     "@types/react": ^18.0.26
