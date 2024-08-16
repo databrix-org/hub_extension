@@ -102,7 +102,7 @@ function activateHubExtension(
 /**
  * Initialization data for the hub-extension.
  */
-const databrixhubExtension: JupyterFrontEndPlugin<void> = {
+const plugin: JupyterFrontEndPlugin<void> = {
   activate: activateHubExtension,
   id: 'databrix-hub-extension:plugin',
   description: 'Registers commands related to the hub server',
@@ -184,6 +184,6 @@ const databrixconnectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
 };
 
 export default [
-  databrixhubExtension,
+  plugin,
   databrixconnectionlost
 ] as JupyterFrontEndPlugin<any>[];
