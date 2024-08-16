@@ -1,39 +1,83 @@
 import {
+  ConnectionLost,
+  IConnectionLost,
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
+  JupyterLab
 } from '@jupyterlab/application';
-import { ICommandPalette } from '@jupyterlab/apputils';
+
+import {
+  Dialog,
+  showDialog
+} from '@jupyterlab/apputils';
+import { ITranslator } from '@jupyterlab/translation';
+import { ServerConnection, ServiceManager } from '@jupyterlab/services';
+
 /**
- * Initialization data for the databrix_hub_extension extension.
+ * Initialization data for the dialog-extension.
  */
-const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'databrix_hub_extension:plugin',
-  description: 'A JupyterLab extension for hub_extension from databrix Project',
-  autoStart: true,
-  requires: [ICommandPalette],
-  activate: (app: JupyterFrontEnd, palette: ICommandPalette) => {
-    console.log('JupyterLab extension databrix_hub_extension is activated!');
+ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
+   id: 'databrix-hub-extension:connectionlost',
+   description:
+     'Provides a service to be notified when the connection to the hub server is lost.',
+   requires: [JupyterFrontEnd.IPaths],
+   optional: [JupyterLab.IInfo],
+   activate: (
+     app: JupyterFrontEnd,
+     paths: JupyterFrontEnd.IPaths,
+     translator: ITranslator,
+     info: JupyterLab.IInfo | null
+   ): IConnectionLost => {
+     const trans = translator.load('jupyterlab');
+     const hubPrefix = paths.urls.hubPrefix || '';
+     const baseUrl = paths.urls.base;
 
-    // Identify the command you want to override (or hide)
-    const commandToRemove = 'hub:restart';
-    console.log('Available commands:', app.commands.listCommands());
-    // Check if the command exists
-    if (app.commands.hasCommand(commandToRemove)) {
-      // Override the command with a no-op or a function that throws an error
-      console.log('hub:restart is removed!');
-      app.commands.addCommand(commandToRemove, {
-        execute: () => {
-          window.open("www.databrix.org", '_blank');
-        },
-        label: 'databrix restart Command',
-        isVisible: () => false, // Optional: Hide it from the palette
-      });
+     // Return the default error message if not running on JupyterHub.
+     if (!hubPrefix) {
+       return ConnectionLost;
+     }
 
-      // Notify the command palette that the command list has changed
-      app.commands.notifyCommandChanged();
-    }
-    console.log('hub:restart is NOT removed!');
-  }
-};
+     // If we are running on JupyterHub, return a dialog
+     // that prompts the user to restart their server.
+     let showingError = false;
+     const onConnectionLost: IConnectionLost = async (
+       manager: ServiceManager.IManager,
+       err: ServerConnection.NetworkError
+     ): Promise<void> => {
+       if (showingError) {
+         return;
+       }
 
-export default plugin;
+       showingError = true;
+       if (info) {
+         info.isConnected = false;
+       }
+       console.log('Databrix restart dialog is started!');
+       const result = await showDialog({
+         title: trans.__('Server unavailable or unreachable'),
+         body: trans.__(
+           'Your server at %1 is not running.\nxxxxxxxxxxxx?',
+           baseUrl
+         ),
+         buttons: [
+           Dialog.okButton({ label: trans.__('Restart') }),
+           Dialog.cancelButton({ label: trans.__('Dismiss') })
+         ]
+       });
+
+       if (info) {
+         info.isConnected = true;
+       }
+       showingError = false;
+
+       if (result.button.accept) {
+         await app.commands.execute("help:jupyter-forum");
+       }
+     };
+     return onConnectionLost;
+   },
+   autoStart: true,
+   provides: IConnectionLost
+ };
+
+export default connectionlost;
