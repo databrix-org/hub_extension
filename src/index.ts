@@ -23,11 +23,8 @@ import { ITranslator } from '@jupyterlab/translation';
  * The command IDs used by the plugin.
  */
 export namespace CommandIDs {
-  export const controlPanel: string = 'hub:control-panel';
 
-  export const logout: string = 'hub:logout';
-
-  export const restart: string = 'hub:restart';
+  export const restart: string = 'databrix:restart';
 }
 
 /**
@@ -106,50 +103,17 @@ function activateHubExtension(
       window.open(restartUrl, '_blank');
     }
   });
-
-  commands.addCommand(CommandIDs.controlPanel, {
-    label: trans.__('Hub Control Panel'),
-    caption: trans.__('Open the Hub control panel in a new browser tab'),
-    execute: () => {
-      window.open(hubHost + URLExt.join(hubPrefix, 'home'), '_blank');
-    }
-  });
-
-  commands.addCommand(CommandIDs.logout, {
-    label: trans.__('Log Out'),
-    caption: trans.__('Log out of the Hub'),
-    execute: () => {
-      window.location.href = hubHost + URLExt.join(baseUrl, 'logout');
-    }
-  });
-
-  // Add palette items.
-  if (palette) {
-    const category = trans.__('Hub');
-    palette.addItem({ category, command: CommandIDs.controlPanel });
-    palette.addItem({ category, command: CommandIDs.logout });
-  }
 }
 
 /**
  * Initialization data for the hub-extension.
  */
-const hubExtension: JupyterFrontEndPlugin<void> = {
+const databrixhubExtension: JupyterFrontEndPlugin<void> = {
   activate: activateHubExtension,
-  id: '@jupyterlab/hub-extension:plugin',
+  id: 'databrix-hub-extension:plugin',
   description: 'Registers commands related to the hub server',
   requires: [JupyterFrontEnd.IPaths, ITranslator],
   optional: [ICommandPalette],
-  autoStart: true
-};
-
-/**
- * Plugin to load menu description based on settings file
- */
-const hubExtensionMenu: JupyterFrontEndPlugin<void> = {
-  activate: () => void 0,
-  id: '@jupyterlab/hub-extension:menu',
-  description: 'Adds hub related commands to the menu.',
   autoStart: true
 };
 
@@ -161,8 +125,8 @@ const hubExtensionMenu: JupyterFrontEndPlugin<void> = {
  * this will provide a dialog that prompts the user to restart the server.
  * Otherwise, it shows an error dialog.
  */
-const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
-  id: '@jupyterlab/hub-extension:connectionlost',
+const databrixconnectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
+  id: 'databrix-hub-extension:connectionlost',
   description:
     'Provides a service to be notified when the connection to the hub server is lost.',
   requires: [JupyterFrontEnd.IPaths, ITranslator],
@@ -201,7 +165,7 @@ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
       const result = await showDialog({
         title: trans.__('Server unavailable or unreachable'),
         body: trans.__(
-          'Your server at %1 is not running.\nWould you like to restart it?',
+          'You are inactive at %1 is not running.',
           baseUrl
         ),
         buttons: [
@@ -226,7 +190,6 @@ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
 };
 
 export default [
-  hubExtension,
-  hubExtensionMenu,
-  connectionlost
+  databrixhubExtension,
+  databrixconnectionlost
 ] as JupyterFrontEndPlugin<any>[];
