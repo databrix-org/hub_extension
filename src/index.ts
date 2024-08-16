@@ -20,7 +20,7 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
    id: 'databrix-hub-extension:connectionlost',
    description:
      'Provides a service to be notified when the connection to the hub server is lost.',
-   requires: [JupyterFrontEnd.IPaths],
+   requires: [JupyterFrontEnd.IPaths, ITranslator],
    optional: [JupyterLab.IInfo],
    activate: (
      app: JupyterFrontEnd,
