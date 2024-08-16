@@ -16,7 +16,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Identify the command you want to override (or hide)
     const commandToRemove = 'hub:restart';
     // Check if the command exists
-    if (commands.hasCommand(commsandToRemove)) {
+    if (commands.hasCommand(commandToRemove)) {
       // Override the command with a no-op or a function that throws an error
       commands.addCommand(commandToRemove, {
         execute: () => {
