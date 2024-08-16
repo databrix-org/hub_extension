@@ -41,7 +41,7 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
             'Your server is not running.\nYou have been inactive for a long time, or Jupyterhub has shut down your server.\nPlease Login again!'
           ),
           buttons: [
-            Dialog.okButton({ label: trans.__('Homepage') }),
+            Dialog.okButton({ label: trans.__('Restart') }),
             Dialog.cancelButton({ label: trans.__('Dismiss') })
           ]
         });
@@ -51,7 +51,7 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
         }
 
         if (result.button.accept) {
-          window.location.href = 'www.databrix.org';
+          window.location.href = '';
         }
       };
       return onConnectionLost;
