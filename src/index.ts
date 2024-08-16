@@ -51,7 +51,7 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
         }
 
         if (result.button.accept) {
-          await window.location.href = 'www.databrix.org';
+          window.location.href = 'www.databrix.org';
         }
       };
       return onConnectionLost;
