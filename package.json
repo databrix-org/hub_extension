@@ -1,6 +1,6 @@
 {
     "name": "databrix_hub_extension",
-    "version": "0.1.1",
+    "version": "0.1.0",
     "description": "A JupyterLab extension for hub_extension from databrix Project",
     "keywords": [
         "jupyter",
@@ -57,7 +57,10 @@
     },
     "dependencies": {
         "@jupyterlab/application": "^4.2.4",
-        "@jupyterlab/apputils": "^4.2.4"
+        "@jupyterlab/apputils": "^4.3.4",
+        "@jupyterlab/coreutils": "^6.2.4",
+        "@jupyterlab/services": "^7.2.4",
+        "@jupyterlab/translation": "^4.2.4"
     },
     "devDependencies": {
         "@jupyterlab/builder": "^4.0.0",
