@@ -2,7 +2,7 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-
+import { ICommandPalette } from '@jupyterlab/apputils';
 /**
  * Initialization data for the databrix_hub_extension extension.
  */
@@ -10,15 +10,18 @@ const plugin: JupyterFrontEndPlugin<void> = {
   id: 'databrix_hub_extension:plugin',
   description: 'A JupyterLab extension for hub_extension from databrix Project',
   autoStart: true,
-  activate: (app: JupyterFrontEnd) => {
+  requires: [ICommandPalette],
+  activate: (app: JupyterFrontEnd, palette: ICommandPalette) => {
     console.log('JupyterLab extension databrix_hub_extension is activated!');
-    const { commands } = app;
+
     // Identify the command you want to override (or hide)
     const commandToRemove = 'hub:restart';
+    console.log('Available commands:', app.commands.listCommands());
     // Check if the command exists
-    if (commands.hasCommand(commandToRemove)) {
+    if (app.commands.hasCommand(commandToRemove)) {
       // Override the command with a no-op or a function that throws an error
-      commands.addCommand(commandToRemove, {
+      console.log('hub:restart is removed!');
+      app.commands.addCommand(commandToRemove, {
         execute: () => {
           window.open("www.databrix.org", '_blank');
         },
@@ -27,8 +30,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
       });
 
       // Notify the command palette that the command list has changed
-      commands.notifyCommandChanged();
+      app.commands.notifyCommandChanged();
     }
+    console.log('hub:restart is NOT removed!');
   }
 };
 
