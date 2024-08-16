@@ -38,10 +38,10 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
         const result = await showDialog({
           title: trans.__('Server unavailable or unreachable'),
           body: trans.__(
-            'Your server at %1 is not running.\nxxxxx?'
+            'Your server is not running.\nYou have been inactive for a long time, or Jupyterhub has shut down your server.\nPlease Login again!'
           ),
           buttons: [
-            Dialog.okButton({ label: trans.__('Restart') }),
+            Dialog.okButton({ label: trans.__('Homepage') }),
             Dialog.cancelButton({ label: trans.__('Dismiss') })
           ]
         });
@@ -51,7 +51,7 @@ import { ServerConnection, ServiceManager } from '@jupyterlab/services';
         }
 
         if (result.button.accept) {
-          await app.commands.execute("help:jupyter-form");
+          await window.location.href = 'www.databrix.org';
         }
       };
       return onConnectionLost;
