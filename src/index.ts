@@ -41,7 +41,6 @@ function activateHubExtension(
   const hubPrefix = paths.urls.hubPrefix || '';
   //const hubUser = paths.urls.hubUser || '';
   //const hubServerName = paths.urls.hubServerName || '';
-  const baseUrl = paths.urls.base;
 
   console.log('JupyterLab extension databrix_hub_extension is activated!');
   // Bail if not running on JupyterHub.
