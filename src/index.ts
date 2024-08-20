@@ -63,8 +63,6 @@ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
  /**
   * Idle Warning extension.
   */
-
-
 const idlewarnextension: JupyterFrontEndPlugin<void> = {
   id: 'idle-culler-warning',
   autoStart: true,
@@ -117,7 +115,7 @@ async function idleculling() {
   const domain = window.location.origin;
   const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
   const servername = match ? match[1] : null;
-  const apiUrl = domain + `/jupyterhub/hub/api/users/${servername}/server`;
+  const apiUrl = `http://0.0.0.0:8081/jupyterhub/hub/api/users/${servername}/server`;
   console.log('HUB API URL: ', apiUrl );
   const token = PageConfig.getToken();
 
