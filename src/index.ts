@@ -112,10 +112,11 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
 
 async function idleculling() {
   const currentUrl = window.location.href
+  const domain = window.location.origin;
   const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
   const servername = match ? match[1] : null;
-  const apiUrl = `http://0.0.0.0:8081/jupyterhub/hub/api/users/${servername}/server`;
-  console.log('HUB API URL: ', apiUrl );
+  const apiUrl = domain + `/jupyterhub/service/idle_culler_warning/cull`;
+  console.log('Server Name ', servername );
   const token = PageConfig.getToken();
 
   if (!token) {
@@ -126,11 +127,12 @@ async function idleculling() {
 
   try {
       const response = await fetch(apiUrl, {
-          method: 'DELETE',
+          method: 'POST',
           headers: {
               'Content-Type': 'application/json',
               'Authorization': `token ${token}`,
-          }
+          },
+          body: JSON.stringify({ Server_Name: servername }),
       });
 
       if (!response.ok) {
