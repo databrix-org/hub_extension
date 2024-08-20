@@ -115,7 +115,7 @@ async function idleculling() {
   const domain = window.location.origin;
   const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
   const servername = match ? match[1] : null;
-  const apiUrl = domain + `/jupyterhub/service/idle_culler_warning/cull`;
+  const apiUrl = domain + `/jupyterhub/services/idle_culler_warning/cull`;
   console.log('Server Name ', servername );
   const token = PageConfig.getToken();
 
