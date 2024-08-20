@@ -112,7 +112,6 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
 
 async function idleculling() {
   const currentUrl = window.location.href
-  const domain = window.location.origin;
   const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
   const servername = match ? match[1] : null;
   const apiUrl = `http://0.0.0.0:8081/jupyterhub/hub/api/users/${servername}/server`;
