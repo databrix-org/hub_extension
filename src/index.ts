@@ -12,52 +12,53 @@ import {
 } from '@jupyterlab/apputils';
 import { ITranslator } from '@jupyterlab/translation';
 import { ServerConnection, ServiceManager } from '@jupyterlab/services';
+import { PageConfig } from '@jupyterlab/coreutils';
 
 /**
  * Initialization data for the dialog-extension.
  */
- const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
-   id: 'databrix-hub-extension:connectionlost',
-   description:
-     'Provides a service to be notified when the connection to the hub server is lost.',
-   requires: [JupyterFrontEnd.IPaths, ITranslator],
-   optional: [JupyterLab.IInfo],
-   activate: (
-     app: JupyterFrontEnd,
-     paths: JupyterFrontEnd.IPaths,
-     translator: ITranslator,
-     info: JupyterLab.IInfo | null
-   ): IConnectionLost => {
-     const trans = translator.load('jupyterlab');
+const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
+ id: 'databrix-hub-extension:connectionlost',
+ description:
+   'Provides a service to be notified when the connection to the hub server is lost.',
+ requires: [JupyterFrontEnd.IPaths, ITranslator],
+ optional: [JupyterLab.IInfo],
+ activate: (
+   app: JupyterFrontEnd,
+   paths: JupyterFrontEnd.IPaths,
+   translator: ITranslator,
+   info: JupyterLab.IInfo | null
+ ): IConnectionLost => {
+   const trans = translator.load('jupyterlab');
 
-     const onConnectionLost: IConnectionLost = async (
-        manager: ServiceManager.IManager,
-        err: ServerConnection.NetworkError
-      ): Promise<void> => {
+   const onConnectionLost: IConnectionLost = async (
+      manager: ServiceManager.IManager,
+      err: ServerConnection.NetworkError
+    ): Promise<void> => {
 
-        const result = await showDialog({
-          title: trans.__('Server unavailable or unreachable'),
-          body: trans.__(
-            'Your server is not running.\nYou have been inactive for a long time, or Jupyterhub has shut down your server.\nPlease Login again!'
-          ),
-          buttons: [
-            Dialog.okButton({ label: trans.__('Restart') }),
-          ]
-        });
+      const result = await showDialog({
+        title: trans.__('Server unavailable or unreachable'),
+        body: trans.__(
+          'Your server is not running.\nYou have been inactive for a long time, or Jupyterhub has shut down your server.\nPlease Login again!'
+        ),
+        buttons: [
+          Dialog.okButton({ label: trans.__('Restart') }),
+        ]
+      });
 
-        if (info) {
-          info.isConnected = true;
-        }
+      if (info) {
+        info.isConnected = true;
+      }
 
-        if (result.button.accept) {
-          window.location.href = '';
-        }
-      };
-      return onConnectionLost;
-   },
-   autoStart: true,
-   provides: IConnectionLost
- };
+      if (result.button.accept) {
+        window.location.href = '';
+      }
+    };
+    return onConnectionLost;
+ },
+ autoStart: true,
+ provides: IConnectionLost
+};
 
  /**
   * Idle Warning extension.
@@ -97,11 +98,11 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
         });
         if (result.button.accept) {
           clearTimeout(timeoutId);
-          console.log('User is still online.');
+            console.log('User is still online.');
         }
       }, warningTime);
 
-      timeoutId2 = window.setTimeout(idleredirect, 2 * warningTime);
+      timeoutId2 = window.setTimeout(idleculling, warningTime + 60000);
     };
 
     window.addEventListener('mousemove', idleCheck);
@@ -111,9 +112,42 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
   }
 };
 
-function idleredirect() {
-  // Redirect the user to a specific page after the timeout
-  window.location.href = 'https://databrix.org'; // Replace with your target URL
+async function idleculling() {
+  const currentUrl = window.location.href
+  const domain = window.location.origin;
+  const match = currentUrl.match(/\/hub\/users\/([^\/]+)\/lab/);
+  const servername = match ? match[1] : null;
+  const apiUrl = domain + `/jupyterhub/hub/api/users/${servername}/server`;
+  console.log('HUB API URL: ', apiUrl );
+  const token = PageConfig.getToken();
+
+  if (!token) {
+  throw new Error('API token is not available from PageConfig.');
+  }
+
+  let responseData: any;
+
+  try {
+      const response = await fetch(apiUrl, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `token ${token}`,
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      responseData = await response.json();
+      console.log('Response Data:', responseData);
+
+
+
+  } catch (error) {
+      console.error('Error fetching data:', error);
+  }
 }
 
 export default [
