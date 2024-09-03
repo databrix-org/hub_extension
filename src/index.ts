@@ -74,7 +74,7 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
     const trans = translator.load('jupyterlab');
     console.log('JupyterLab extension idle-culler-warning is activated!');
 
-    const warningTime = 1 * 60 * 1000; // 1 minute
+    const warningTime = 8 * 60 * 1000; // 8 minuten
 
     let timeoutId: number;
     let timeoutId2: number;
@@ -100,7 +100,7 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
         }
       }, warningTime);
 
-      timeoutId2 = window.setTimeout(idleculling, warningTime + 60000);
+      timeoutId2 = window.setTimeout(idleculling, warningTime + 120000);
     };
 
     window.addEventListener('mousemove', idleCheck);
