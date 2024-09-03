@@ -12,7 +12,7 @@ import {
 } from '@jupyterlab/apputils';
 import { ITranslator } from '@jupyterlab/translation';
 import { ServerConnection, ServiceManager } from '@jupyterlab/services';
-import { PageConfig } from '@jupyterlab/coreutils';
+//import { PageConfig } from '@jupyterlab/coreutils';
 
 /**
  * Initialization data for the dialog-extension.
@@ -111,41 +111,43 @@ const idlewarnextension: JupyterFrontEndPlugin<void> = {
 };
 
 async function idleculling() {
-  const currentUrl = window.location.href
+  // const currentUrl = window.location.href
   const domain = window.location.origin;
-  const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
-  const servername = match ? match[1] : null;
-  const apiUrl = domain + `/jupyterhub/services/idle_culler_warning/cull`;
-  console.log('Server Name ', servername );
-  const token = PageConfig.getToken();
-
-  if (!token) {
-  throw new Error('API token is not available from PageConfig.');
-  }
-
-  let responseData: any;
-
+  // const match = currentUrl.match(/\/user\/([^\/]+)\/lab/);
+  // const servername = match ? match[1] : null;
+  // const apiUrl = domain + `/jupyterhub/services/idle_culler_warning/cull`;
+  const logouturl = domain + '/jupyterhub/hub/logout'
+  // console.log('Server Name ', servername );
+  // const token = PageConfig.getToken();
+  //
+  // if (!token) {
+  // throw new Error('API token is not available from PageConfig.');
+  // }
+  //
+  // let responseData: any;
+  //
+  // try {
+  //     const response = await fetch(apiUrl, {
+  //         method: 'POST',
+  //         headers: {
+  //             'Content-Type': 'application/json',
+  //             'Authorization': `token ${token}`,
+  //         },
+  //         body: JSON.stringify({ Server_Name: servername }),
+  //     });
+  //
+  //     if (!response.ok) {
+  //         throw new Error(`Network response was not ok: ${response.statusText}`);
+  //     }
+  //
+  //     responseData = await response.json();
+  //     console.log('Response Data:', responseData);
   try {
-      const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `token ${token}`,
-          },
-          body: JSON.stringify({ Server_Name: servername }),
-      });
-
-      if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      responseData = await response.json();
-      console.log('Response Data:', responseData);
-
+    window.location.href = logouturl;
 
 
   } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error while redirecting:', error);
   }
 }
 
